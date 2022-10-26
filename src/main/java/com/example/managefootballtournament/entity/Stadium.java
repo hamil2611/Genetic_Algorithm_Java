@@ -4,23 +4,19 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "match")
+@Table(name = "stadium")
 @Data
 @NoArgsConstructor
-public class Match {
+public class Stadium {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private int id;
-    @Column(name = "couple_match")
-    private String coupleMatch;
-    @Column(name = "round")
-    private int round;
+    @Column(name = "name")
+    private String name;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "tournament_hold_id")
     private Tournament tournament;
 }

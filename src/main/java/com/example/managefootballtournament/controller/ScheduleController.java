@@ -18,6 +18,10 @@ public class ScheduleController {
      private final ScheduleService scheduleService;
 
 
+     @GetMapping
+     public ResponseEntity<List<Schedule>> getSchedule(@RequestParam(required = false) Integer tournamentId){
+          return ResponseEntity.status(HttpStatus.OK).body(scheduleService.solveSchedule(tournamentId));
+     }
      @PostMapping("/add-schedule")
      public ResponseEntity<Integer> addSchedule(@RequestBody Schedule schedule){
           return new ResponseEntity<>(scheduleService.addSchedule(schedule), HttpStatus.OK);
@@ -34,6 +38,11 @@ public class ScheduleController {
      @PostMapping("/solve-match")
      public ResponseEntity displayMatch(@RequestParam(required = false) int tournamentId){
           return new ResponseEntity<>(initCoupleMatch.solveMatchCouple(tournamentId), HttpStatus.OK);
+     }
+
+     @PostMapping("/tool-schedule")
+     public ResponseEntity solveSchedule(@RequestParam(required = false) int tournamentId){
+          return ResponseEntity.ok("");
      }
 }
 

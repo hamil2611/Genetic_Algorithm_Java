@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "football_team")
@@ -27,6 +26,6 @@ public class FootballTeam {
     @Column(name = "amount_player")
     private int amountPlayer;
     @ManyToOne
-    @JoinColumn(name = "tournament_id")
+    @JoinColumn(name = "tournament_hold_id")
     private Tournament tournament;
 }
