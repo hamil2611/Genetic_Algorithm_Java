@@ -25,6 +25,10 @@ public class Tournament {
     private int amountStadium;
     @Column(name = "amount_referee")
     private int amountReferee;
+    @Column(name = "amount_match")
+    private int amountMatch;
+    @Column(name = "amount_day_in_round")
+    private int amountDayInRound;
     @Column(name = "address")
     private String address;
 
@@ -35,4 +39,21 @@ public class Tournament {
     @OneToMany(mappedBy = "tournament",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private List<Schedule> schedule;
+
+    @OneToMany(mappedBy = "tournament",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<TimeSlot> timeSlots;
+
+    @OneToMany(mappedBy = "tournament",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Match> matchs;
+
+    @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Referee> referees;
+
+    @OneToMany(mappedBy = "tournament", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<Stadium> stadiums;
+
 }

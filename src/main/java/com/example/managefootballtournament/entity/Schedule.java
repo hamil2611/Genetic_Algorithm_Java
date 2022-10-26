@@ -14,14 +14,23 @@ public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(name = "date_happen")
-    private LocalDate dateHappen;
+    @Column(name = "day")
+    private int day;
+    @Column(name = "number_of_match")
+    private int numberOfMatch;
+    @Column(name = "name_match")
+    private String nameMatch;
+    @Column(name = "name_referee")
+    private String nameReferee;
+    @Column(name = "name_stadium")
+    private String nameStadium;
     @Column(name = "time_slot")
     private String timeSlot;
-    @Column(name = "start_time")
-    private LocalDateTime startTime;
-    @Column(name = "end_time")
-    private LocalDateTime endTime;
+    @Column(name = "date_happen")
+    private String dateHappen;
+    @Column(name = "description")
+    private String description;
+
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "tournament_hold_id")
