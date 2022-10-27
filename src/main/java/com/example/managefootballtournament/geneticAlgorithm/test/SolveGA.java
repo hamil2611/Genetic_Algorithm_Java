@@ -1,4 +1,4 @@
-package com.example.managefootballtournament.geneticAlgorithm;
+package com.example.managefootballtournament.geneticAlgorithm.test;
 
 import org.springframework.stereotype.Component;
 

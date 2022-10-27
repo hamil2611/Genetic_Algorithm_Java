@@ -14,6 +14,8 @@ public class Schedule {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+    @Column(name = "round")
+    private int round;
     @Column(name = "day")
     private int day;
     @Column(name = "number_of_match")
@@ -31,8 +33,7 @@ public class Schedule {
     @Column(name = "description")
     private String description;
 
-
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tournament_hold_id")
     private Tournament tournament;
 

@@ -4,8 +4,9 @@ import com.example.managefootballtournament.domain.ScheduleDTO;
 import com.example.managefootballtournament.entity.Match;
 import com.example.managefootballtournament.entity.Schedule;
 import com.example.managefootballtournament.entity.Tournament;
-import com.example.managefootballtournament.entityGA.TranDau;
-import com.example.managefootballtournament.entityGA.VongDau;
+import com.example.managefootballtournament.geneticAlgorithm.InitCoupleMatch;
+import com.example.managefootballtournament.geneticAlgorithm.entityGA.MatchGA;
+import com.example.managefootballtournament.geneticAlgorithm.entityGA.RoundGA;
 import com.example.managefootballtournament.geneticAlgorithm.SolveGAv2;
 import com.example.managefootballtournament.repository.ScheduleRepository;
 import com.example.managefootballtournament.repository.TournamentRepository;
@@ -25,6 +26,7 @@ public class ScheduleService {
     private final ModelMapper modelMapper;
     private final TournamentRepository tournamentRepository;
     private final SolveGAv2 solveGAv2;
+    private final InitCoupleMatch initCoupleMatch;
 
     public Integer addSchedule(Schedule schedule) {
         scheduleRepository.save(schedule);
@@ -35,38 +37,41 @@ public class ScheduleService {
         return scheduleRepository.findAllByTournamentId(tournamentId).stream().map(x -> modelMapper.map(x, ScheduleDTO.class)).collect(Collectors.toList());
     }
 
-    public List<Schedule> solveSchedule(Integer tournamentId) {
+    public List<Schedule> solveSchedule(Integer tournamentId, Integer amountIndividual) {
         List<Schedule> listSchedule = new ArrayList<>();
         Optional<Tournament> tournamentOptional = tournamentRepository.findById(tournamentId);
         Tournament tournament = tournamentOptional.get();
+        initCoupleMatch.initMatch(tournament);
+        int amountReferees = tournament.getReferees().size();
+        int amountStadiums = tournament.getStadiums().size();
+        int amountMatchs = tournament.getFootballTeams().size()/2;
+        int amountTimeSlots = tournament.getAmountDayInRound() * tournament.getTimeSlots().size();
+        int amountRounds = 0;
+        //Validate Input Amount Round
+        if(tournament.getFootballTeams().size()%2!=0)
+            amountRounds = tournament.getFootballTeams().size();
+        else
+            amountRounds = tournament.getFootballTeams().size()-1;
 
-        int slTrongTai = tournament.getAmountReferee();
-        int slSVD = tournament.getAmountStadium();
-        int slTranDau = 0;
-        int slTimeSlot = tournament.getAmountDayInRound() * tournament.getTimeSlots().size();
-        int slVongDau = slTranDau * 2 - 1;
-        List<VongDau> listVongDau = solveGAv2.methodSolveGA(10, slTrongTai, slSVD, slTranDau, slTimeSlot, slVongDau);
-
+        List<RoundGA> listRoundGA = solveGAv2.methodSolveGA( amountIndividual, amountReferees, amountStadiums, amountMatchs, amountTimeSlots, amountRounds);
         int numberOfRound = 1;
-        int ngaythidau = 1;
-        for (VongDau vd : listVongDau) {
-
+        for (RoundGA vd : listRoundGA) {
             List<Match> listMatch = getRound(tournament.getMatchs(), numberOfRound);
-            numberOfRound++;
-            for (TranDau td : vd.getListTranDau()) {
+            for (MatchGA td : vd.getListMatchGA()) {
                 Schedule schedule = new Schedule();
-                schedule.setDay(ngaythidau);
-                ngaythidau++;
+                schedule.setDay((numberOfRound-1)*tournament.getAmountDayInRound() + calcuMatchDay(td.getTimeslot(),tournament.getTimeSlots().size())+1);
                 schedule.setTournament(tournament);
-                schedule.setTimeSlot(tournament.getTimeSlots().get(td.getTimeslot()).getSlot());
                 schedule.setNumberOfMatch(td.getMaTD());
-                schedule.setNameMatch(listMatch.get(td.getMaTD() - 1).getCoupleMatch());
-                schedule.setTimeSlot(tournament.getTimeSlots().get(td.getTimeslot()).getSlot());
+                schedule.setNameMatch(listMatch.get(td.getMaTD()).getCoupleMatch());
+                schedule.setTimeSlot(tournament.getTimeSlots().get((td.getTimeslot() + tournament.getTimeSlots().size() -1)%tournament.getTimeSlots().size()).getSlot());
                 schedule.setNameReferee(tournament.getReferees().get(td.getTrongtai()).getName());
-                schedule.setNameStadium(tournament.getReferees().get(td.getTimeslot()).getName());
+                schedule.setNameStadium(tournament.getStadiums().get(td.getSanvandong()).getName());
+                schedule.setRound(numberOfRound);
                 listSchedule.add(schedule);
             }
+            numberOfRound++;
         }
+        scheduleRepository.saveAll(listSchedule);
         return listSchedule;
     }
 
@@ -77,5 +82,12 @@ public class ScheduleService {
                 listMatch.add(match);
         }
         return listMatch;
+    }
+
+    public int calcuMatchDay(int maTimeSlot, int slTimeSlotInDay){
+        if(maTimeSlot%slTimeSlotInDay !=0)
+            return maTimeSlot/slTimeSlotInDay;
+        else
+            return maTimeSlot/slTimeSlotInDay-1;
     }
 }

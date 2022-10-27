@@ -1,4 +1,4 @@
-package com.example.managefootballtournament.entityGA;
+package com.example.managefootballtournament.geneticAlgorithm.entityGA;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -6,9 +6,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-@Data
 @AllArgsConstructor
+@Data
 @NoArgsConstructor
-public class QuanThe {
-    private List<LichThiDau> listLichThiDau;
+public class RoundGA {
+    private List<MatchGA> listMatchGA;
 }

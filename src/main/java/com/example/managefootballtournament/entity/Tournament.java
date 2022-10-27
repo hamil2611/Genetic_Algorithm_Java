@@ -29,6 +29,8 @@ public class Tournament {
     private int amountMatch;
     @Column(name = "amount_day_in_round")
     private int amountDayInRound;
+    @Column(name = "formula")
+    private String formula;
     @Column(name = "address")
     private String address;
 

@@ -15,34 +15,26 @@ import java.util.List;
 @RequestMapping("/schedule")
 @RequiredArgsConstructor
 public class ScheduleController {
-     private final ScheduleService scheduleService;
+    private final ScheduleService scheduleService;
 
+    @GetMapping
+    public ResponseEntity<List<Schedule>> getSchedule(@RequestParam(required = false) Integer tournamentId, @RequestParam(required = false) Integer amountIndividual) {
+        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.solveSchedule(tournamentId, amountIndividual));
+    }
 
-     @GetMapping
-     public ResponseEntity<List<Schedule>> getSchedule(@RequestParam(required = false) Integer tournamentId){
-          return ResponseEntity.status(HttpStatus.OK).body(scheduleService.solveSchedule(tournamentId));
-     }
-     @PostMapping("/add-schedule")
-     public ResponseEntity<Integer> addSchedule(@RequestBody Schedule schedule){
-          return new ResponseEntity<>(scheduleService.addSchedule(schedule), HttpStatus.OK);
-     }
+    @PostMapping("/add-schedule")
+    public ResponseEntity<Integer> addSchedule(@RequestBody Schedule schedule) {
+        return new ResponseEntity<>(scheduleService.addSchedule(schedule), HttpStatus.OK);
+    }
 
-     @GetMapping("/detail-tournament")
-     public ResponseEntity<List<ScheduleDTO>> displayDetailScheduleOfTournament(@RequestParam(required = false) int tournamentId){
-          return new ResponseEntity<>(scheduleService.findScheduleForTournament(tournamentId), HttpStatus.OK);
-     }
+    @GetMapping("/detail-tournament")
+    public ResponseEntity<List<ScheduleDTO>> displayDetailScheduleOfTournament(@RequestParam(required = false) int tournamentId) {
+        return new ResponseEntity<>(scheduleService.findScheduleForTournament(tournamentId), HttpStatus.OK);
+    }
 
-
-     /////
-     private final InitCoupleMatch initCoupleMatch;
-     @PostMapping("/solve-match")
-     public ResponseEntity displayMatch(@RequestParam(required = false) int tournamentId){
-          return new ResponseEntity<>(initCoupleMatch.solveMatchCouple(tournamentId), HttpStatus.OK);
-     }
-
-     @PostMapping("/tool-schedule")
-     public ResponseEntity solveSchedule(@RequestParam(required = false) int tournamentId){
-          return ResponseEntity.ok("");
-     }
+    @PostMapping("/tool-schedule")
+    public ResponseEntity solveSchedule(@RequestParam(required = false) int tournamentId) {
+        return ResponseEntity.ok("");
+    }
 }
 

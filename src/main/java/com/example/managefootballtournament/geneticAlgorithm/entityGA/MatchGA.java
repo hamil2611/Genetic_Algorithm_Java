@@ -1,4 +1,4 @@
-package com.example.managefootballtournament.entityGA;
+package com.example.managefootballtournament.geneticAlgorithm.entityGA;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class TranDau {
+public class MatchGA {
     private int maTD;
     private int timeslot;
     private int trongtai;
