@@ -53,7 +53,7 @@ public class ScheduleService {
         else
             amountRounds = tournament.getFootballTeams().size()-1;
 
-        List<RoundGA> listRoundGA = solveGAv2.methodSolveGA( amountIndividual, amountReferees, amountStadiums, amountMatchs, amountTimeSlots, amountRounds);
+        List<RoundGA> listRoundGA = solveGAv2.methodSolveGA( amountIndividual, amountReferees, amountStadiums, amountMatchs, amountTimeSlots, amountRounds, tournament.getTimeSlots().size());
         int numberOfRound = 1;
         for (RoundGA vd : listRoundGA) {
             List<Match> listMatch = getRound(tournament.getMatchs(), numberOfRound);

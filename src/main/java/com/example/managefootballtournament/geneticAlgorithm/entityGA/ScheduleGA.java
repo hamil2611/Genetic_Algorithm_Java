@@ -11,4 +11,5 @@ import java.util.List;
 @NoArgsConstructor
 public class ScheduleGA {
     private List<RoundGA> listRoundGA;
+    private int adaptability;
 }
