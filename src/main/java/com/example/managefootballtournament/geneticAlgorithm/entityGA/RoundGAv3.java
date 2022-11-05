@@ -4,12 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ScheduleGA {
-    private List<RoundGA> listRoundGA;
-    private int fitness;
+public class RoundGAv3 {
+    private String matchStr;
+    private String timeslotStr;
+    private String refereeStr;
+    private String stadiumStr;
 }

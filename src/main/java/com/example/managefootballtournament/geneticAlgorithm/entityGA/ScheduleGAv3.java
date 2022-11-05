@@ -9,7 +9,8 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ScheduleGA {
-    private List<RoundGA> listRoundGA;
+public class ScheduleGAv3 {
+    private List<int[]> listRound;
     private int fitness;
+
 }

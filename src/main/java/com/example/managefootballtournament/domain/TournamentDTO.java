@@ -16,5 +16,5 @@ public class TournamentDTO {
     @JsonProperty
     private int amountStadium;
     @JsonProperty
-    private int amountReferee;
+    private int amountMatch;
 }
