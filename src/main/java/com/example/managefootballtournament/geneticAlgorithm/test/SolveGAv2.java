@@ -1,7 +1,7 @@
 package com.example.managefootballtournament.geneticAlgorithm.test;
 
 import com.example.managefootballtournament.geneticAlgorithm.WeightConstraint;
-import com.example.managefootballtournament.geneticAlgorithm.entityGA.ScheduleGA;
+import com.example.managefootballtournament.geneticAlgorithm.entityGA.ScheduleGAv1;
 import com.example.managefootballtournament.geneticAlgorithm.entityGA.PopulationGA;
 import com.example.managefootballtournament.geneticAlgorithm.entityGA.MatchGA;
 import com.example.managefootballtournament.geneticAlgorithm.entityGA.RoundGA;
@@ -16,15 +16,15 @@ import java.util.Random;
 public class SolveGAv2 {
     Random random = new Random();
 
-    public PopulationGA initRanDomQuanThe(int slCaThe, int amountReferee, int amountStadium, int amountMatch, int amountTimeslot, int amountRound) {
-        List<ScheduleGA> listScheduleGA = new ArrayList<>();
+    public PopulationGA initRanDomQuanThe(int slCaThe, int amountReferee, int amountStadium, int amountMatchInRound, int amountTimeslot, int amountRound) {
+        List<ScheduleGAv1> listScheduleGAv1 = new ArrayList<>();
         for (int c = 0; c < slCaThe; c++) {
             List<RoundGA> listRoundGA = new ArrayList<>();
             for (int v = 0; v < amountRound; v++) {
                 List<MatchGA> listMatchGA = new ArrayList<>();
                 // Mỗi lần khởi tại vòng đấu thì khởi tạo lại kho chứa Timeslot
                 List<Integer> listTimeSlot = initBoxTimeSlot(amountReferee, amountStadium, amountTimeslot);
-                for (int t = 0; t < amountMatch; t++) {
+                for (int t = 0; t < amountMatchInRound; t++) {
                     int maTD = t;
                     int index = random.nextInt(listTimeSlot.size());
                     int maTimeslot = listTimeSlot.get(index);
@@ -52,10 +52,10 @@ public class SolveGAv2 {
                 RoundGA vd = new RoundGA(listMatchGA);
                 listRoundGA.add(vd);
             }
-            ScheduleGA ltd = new ScheduleGA(listRoundGA,0);
-            listScheduleGA.add(ltd);
+            ScheduleGAv1 ltd = new ScheduleGAv1(listRoundGA,0);
+            listScheduleGAv1.add(ltd);
         }
-        PopulationGA quanthe = new PopulationGA(listScheduleGA);
+        PopulationGA quanthe = new PopulationGA(listScheduleGAv1);
         return quanthe;
     }
 
@@ -134,11 +134,11 @@ public class SolveGAv2 {
         return fitness;
     }
 
-    public PopulationGA Laighep(List<ScheduleGA> scheduleGAList, int index) {
-        PopulationGA populationGA = new PopulationGA(scheduleGAList);
-        for (int c = 0; c < populationGA.getListScheduleGA().size(); c += 2) {
-            List<RoundGA> listRoundGA1 = populationGA.getListScheduleGA().get(c).getListRoundGA();
-            List<RoundGA> listRoundGA2 = populationGA.getListScheduleGA().get(c + 1).getListRoundGA();
+    public PopulationGA Laighep(List<ScheduleGAv1> scheduleGAv1List, int index) {
+        PopulationGA populationGA = new PopulationGA(scheduleGAv1List);
+        for (int c = 0; c < populationGA.getListScheduleGAv1().size(); c += 2) {
+            List<RoundGA> listRoundGA1 = populationGA.getListScheduleGAv1().get(c).getListRoundGA();
+            List<RoundGA> listRoundGA2 = populationGA.getListScheduleGAv1().get(c + 1).getListRoundGA();
             for (int v = 0; v < listRoundGA1.size(); v++) {
                 List<MatchGA> listMatchGA1 = new ArrayList<>();
                 listMatchGA1.addAll(listRoundGA1.get(v).getListMatchGA().subList(0, index));
@@ -160,21 +160,21 @@ public class SolveGAv2 {
         return populationGA;
     }
 
-    public List<RoundGA> methodSolveGA(int slCaThe, int amountReferee, int amountStadium, int amountMatch, int amountTimeslot, int amountRound, int amountTimeslotInday) {
+    public List<RoundGA> methodSolveGA(int slCaThe, int amountReferee, int amountStadium, int amountMatchInRound, int amountTimeslot, int amountRound, int amountTimeslotInday) {
         //Khởi tạo
         System.out.println("**************** Bước Khởi Tạo ****************");
-        PopulationGA populationGAInit = new PopulationGA(initRanDomQuanThe(slCaThe, amountReferee, amountStadium, amountMatch, amountTimeslot, amountRound).getListScheduleGA());
+        PopulationGA populationGAInit = new PopulationGA(initRanDomQuanThe(slCaThe, amountReferee, amountStadium, amountMatchInRound, amountTimeslot, amountRound).getListScheduleGAv1());
         //Độ Thích Nghi
-        List<ScheduleGA> listScheduleGA = populationGAInit.getListScheduleGA();
-        for(int i=0;i<listScheduleGA.size();i++){
-            ScheduleGA scheduleGA = new ScheduleGA(listScheduleGA.get(i).getListRoundGA(),calcufitness(listScheduleGA.get(i).getListRoundGA(), amountTimeslotInday));
-            listScheduleGA.remove(i);
-            listScheduleGA.add(i,scheduleGA);
+        List<ScheduleGAv1> listScheduleGAv1 = populationGAInit.getListScheduleGAv1();
+        for(int i = 0; i< listScheduleGAv1.size(); i++){
+            ScheduleGAv1 scheduleGAv1 = new ScheduleGAv1(listScheduleGAv1.get(i).getListRoundGA(),calcufitness(listScheduleGAv1.get(i).getListRoundGA(), amountTimeslotInday));
+            listScheduleGAv1.remove(i);
+            listScheduleGAv1.add(i, scheduleGAv1);
         }
         //Sort Giam Dan
-        listScheduleGA.sort(new Comparator<ScheduleGA>() {
+        listScheduleGAv1.sort(new Comparator<ScheduleGAv1>() {
             @Override
-            public int compare(ScheduleGA o1, ScheduleGA o2) {
+            public int compare(ScheduleGAv1 o1, ScheduleGAv1 o2) {
                 if (o1.getFitness() == o2.getFitness())
                     return 0;
                 else if (o1.getFitness() < o2.getFitness())
@@ -183,16 +183,16 @@ public class SolveGAv2 {
                     return -1;
             }
         });
-        listScheduleGA.forEach(ltd -> {
+        listScheduleGAv1.forEach(ltd -> {
             System.out.println("Lich Thi Dau");
             System.out.println(ltd.getFitness());
         });
-        populationGAInit.setListScheduleGA(listScheduleGA);
+        populationGAInit.setListScheduleGAv1(listScheduleGAv1);
         //Lai Ghep
         System.out.println("**************** Bước Lai Ghép ****************");
         //QuanThe quanTheMoi = new QuanThe(Laighep(quanTheInit.getListLichThiDau(), 3).getListLichThiDau());
 
-        return populationGAInit.getListScheduleGA().get(0).getListRoundGA();
+        return populationGAInit.getListScheduleGAv1().get(0).getListRoundGA();
     }
 
 
@@ -201,17 +201,17 @@ public class SolveGAv2 {
         int slCaThe = 10;
         int amountReferee = 2;
         int amountStadium = 2;
-        int amountMatch = 5;
+        int amountMatchInRound = 5;
         int amountTimeslot = 21;
         int amountTimeslotInday = 7;
-        int amountRound = amountMatch * 2 - 1;
+        int amountRound = amountMatchInRound * 2 - 1;
 
         //Khởi tạo
         System.out.println("**************** Bước Khởi Tạo ****************");
-        PopulationGA populationGAInit = new PopulationGA(solveGAv2.initRanDomQuanThe(slCaThe, amountReferee, amountStadium, amountMatch, amountTimeslot, amountRound).getListScheduleGA());
-        List<ScheduleGA> listScheduleGA = populationGAInit.getListScheduleGA();
+        PopulationGA populationGAInit = new PopulationGA(solveGAv2.initRanDomQuanThe(slCaThe, amountReferee, amountStadium, amountMatchInRound, amountTimeslot, amountRound).getListScheduleGAv1());
+        List<ScheduleGAv1> listScheduleGAv1 = populationGAInit.getListScheduleGAv1();
 //        listLichThiDau.forEach(i -> solveGAv2.calcuDoThichNghi(i.getListVongDau(), amountTimeslot,amountReferee,amountStadium));
-        listScheduleGA.forEach(ltd -> {
+        listScheduleGAv1.forEach(ltd -> {
             System.out.println("Lich Thi Dau");
             solveGAv2.calcufitness(ltd.getListRoundGA(), amountTimeslotInday);
             ltd.getListRoundGA().forEach(vd -> {
@@ -259,10 +259,10 @@ public class SolveGAv2 {
         }
         return listInit;
     }
-    public MatchGA checkRepeatTimeSlot(List<MatchGA> listMatchGA,int maTD, int maTimeSlot, int amountMatch, int amountStadium) {
+    public MatchGA checkRepeatTimeSlot(List<MatchGA> listMatchGA,int maTD, int maTimeSlot, int amountMatchInRound, int amountStadium) {
         for (MatchGA matchGA : listMatchGA) {
             if (matchGA.getTimeslot() == maTimeSlot) {
-                List<Integer> listReferee = initListRefereeInt(amountMatch, matchGA.getTrongtai());
+                List<Integer> listReferee = initListRefereeInt(amountMatchInRound, matchGA.getTrongtai());
                 List<Integer> listStadium = initListStadiumInt(amountStadium, matchGA.getSanvandong());
                 int maTrongTai = listReferee.get(random.nextInt(listReferee.size()));
                 int maSVD = listStadium.get(random.nextInt(listStadium.size()));
@@ -272,9 +272,9 @@ public class SolveGAv2 {
         return null;
     }
     // Khởi tạo lại list trọng tài loại bỏ trọng tài đã được dùng trong 1 khung giờ
-    public List<Integer> initListRefereeInt(int amountMatch, int refereeDrop) {
+    public List<Integer> initListRefereeInt(int amountMatchInRound, int refereeDrop) {
         List<Integer> listRefereeInt = new ArrayList<>();
-        for (int i = 0; i < amountMatch; i++)
+        for (int i = 0; i < amountMatchInRound; i++)
             if (i != refereeDrop)
                 listRefereeInt.add(i);
         return listRefereeInt;

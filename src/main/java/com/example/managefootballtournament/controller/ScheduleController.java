@@ -2,7 +2,8 @@ package com.example.managefootballtournament.controller;
 
 import com.example.managefootballtournament.domain.ScheduleDTO;
 import com.example.managefootballtournament.entity.Schedule;
-import com.example.managefootballtournament.geneticAlgorithm.InitCoupleMatch;
+import com.example.managefootballtournament.entity.ScheduleInDay;
+import com.example.managefootballtournament.geneticAlgorithm.GeneticAlgorithm;
 import com.example.managefootballtournament.service.ScheduleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,15 +17,18 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ScheduleController {
     private final ScheduleService scheduleService;
+    private final GeneticAlgorithm geneticAlgorithm;
 
     @GetMapping
-    public ResponseEntity<List<Schedule>> getSchedule(@RequestParam(required = false) Integer tournamentId, @RequestParam(required = false) Integer amountIndividual) {
-        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.solveSchedule(tournamentId, amountIndividual));
+    public ResponseEntity<List<ScheduleInDay>> getSchedule(@RequestParam(required = false) Integer tournamentId,
+                                                           @RequestParam(required = false) Integer amountIndividual,
+                                                           @RequestParam(required = false) Integer mutationProbability) {
+        return ResponseEntity.status(HttpStatus.OK).body(scheduleService.solveSchedule(tournamentId, amountIndividual,mutationProbability));
     }
 
     @PostMapping("/add-schedule")
-    public ResponseEntity<Integer> addSchedule(@RequestBody Schedule schedule) {
-        return new ResponseEntity<>(scheduleService.addSchedule(schedule), HttpStatus.OK);
+    public ResponseEntity<Integer> addSchedule(@RequestBody ScheduleInDay scheduleInDay) {
+        return new ResponseEntity<>(scheduleService.addSchedule(scheduleInDay), HttpStatus.OK);
     }
 
     @GetMapping("/detail-tournament")
@@ -35,6 +39,14 @@ public class ScheduleController {
     @PostMapping("/tool-schedule")
     public ResponseEntity solveSchedule(@RequestParam(required = false) int tournamentId) {
         return ResponseEntity.ok("");
+    }
+
+    @GetMapping("/init")
+    public ResponseEntity<List<Schedule>> initPopulation(@RequestParam(required = false) Integer tournamentId,
+                                                         @RequestParam(required = false) Integer amountIndividual,
+                                                         @RequestParam(required = false) Integer mutationProbability){
+        System.out.println("INIT");
+        return new ResponseEntity<>(scheduleService.initPopulationState(tournamentId,amountIndividual),HttpStatus.OK);
     }
 }
 

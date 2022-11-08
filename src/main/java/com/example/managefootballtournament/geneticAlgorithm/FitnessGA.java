@@ -1,16 +1,15 @@
-package com.example.managefootballtournament.entity;
+package com.example.managefootballtournament.geneticAlgorithm;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class Schedule {
-    private List<ScheduleInDay> scheduleInDayList;
+public class FitnessGA {
+    private int fitness;
+    private int totalConstraint;
 }

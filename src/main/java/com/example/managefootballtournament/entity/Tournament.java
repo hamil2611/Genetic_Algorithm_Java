@@ -1,7 +1,6 @@
 package com.example.managefootballtournament.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,7 +25,7 @@ public class Tournament {
     @Column(name = "amount_referee")
     private int amountReferee;
     @Column(name = "amount_match")
-    private int amountMatch;
+    private int amountMatchInRound;
     @Column(name = "amount_day_in_round")
     private int amountDayInRound;
     @Column(name = "formula")
@@ -40,7 +39,7 @@ public class Tournament {
 
     @OneToMany(mappedBy = "tournament",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<Schedule> schedule;
+    private List<ScheduleInDay> scheduleInDay;
 
     @OneToMany(mappedBy = "tournament",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
