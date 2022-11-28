@@ -11,6 +11,10 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ScheduleGA {
     private int[] chromosome;
-    private int fitness;
-    private int totalConstraint;
+    private float fitness;
+    private int totalConstraintClashReferee;
+    private int totalConstraintRefereeInDay;
+    private int totalConstraintSpaceInRound;
+    private int totalConstraintSpaceInDay;
 }
+

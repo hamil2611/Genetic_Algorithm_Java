@@ -39,10 +39,6 @@ public class Tournament {
 
     @OneToMany(mappedBy = "tournament",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<ScheduleInDay> scheduleInDay;
-
-    @OneToMany(mappedBy = "tournament",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
     private List<TimeSlot> timeSlots;
 
     @OneToMany(mappedBy = "tournament",cascade = CascadeType.ALL, fetch = FetchType.LAZY)

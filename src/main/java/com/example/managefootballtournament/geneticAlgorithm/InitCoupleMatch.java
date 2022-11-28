@@ -56,13 +56,16 @@ public class InitCoupleMatch {
             }
             //Số đội bóng tham gia chẵn
             else {
-                for (int i = 0; i < amountTeam; i += 2) {
-                    String coupleMatch = listFootBallTeam.get(i).getNameTeam() + " VS " + listFootBallTeam.get(i + 1).getNameTeam();
+                int l=0, r=listMatchInt.size()-1;
+                while (l<=r){
+                    String coupleMatch = listFootBallTeam.get(listMatchInt.get(l)-1).getNameTeam() + " VS " + listFootBallTeam.get(listMatchInt.get(r)-1).getNameTeam();
                     Match match = new Match();
                     match.setCoupleMatch(coupleMatch);
                     match.setRound(v);
                     match.setTournament(tournament);
                     listMatch.add(match);
+                    l++;
+                    r--;
                 }
                 int tmp = listMatchInt.get(listMatchInt.size() - 1);
                 listMatchInt.remove(listMatchInt.size() - 1);

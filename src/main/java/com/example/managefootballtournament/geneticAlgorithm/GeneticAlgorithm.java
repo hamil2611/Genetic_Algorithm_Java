@@ -8,270 +8,388 @@ import java.util.*;
 public class GeneticAlgorithm {
     Random random = new Random();
 
-    public List<Integer> initBoxTimeSlot(int amountReferee, int amountStadium, int amountTimeslot) {
+    public List<Integer> initBoxTimeSlot(int amountReferee, int amountTimeslot) {
         List<Integer> listInit = new ArrayList<>();
-        if (amountReferee >= amountStadium)
-            for (int i = 0; i < amountStadium; i++)
-                for (int j = 1; j <= amountTimeslot; j++)
-                    listInit.add(j);
-        else {
-            for (int i = 0; i < amountReferee; i++)
-                for (int j = 1; j <= amountTimeslot; j++)
-                    listInit.add(j);
-        }
+        for (int i = 0; i < amountReferee; i++)
+            for (int j = 0; j < amountTimeslot; j++)
+                listInit.add(j);
         return listInit;
     }
 
-    public List<Integer> initListRefereeInt(List<Integer> listRefereeInt, int amountReferee) {
-        List<Integer> listRefereeIntNotExist = new ArrayList<>();
-        for (int i = 0; i < amountReferee; i++)
-            if (!listRefereeInt.contains(i))
-                listRefereeIntNotExist.add(i);
-        return listRefereeIntNotExist;
-    }
-
-    public List<Integer> initListStadiumInt(List<Integer> listStaidumInt, int amountStadium) {
-        List<Integer> listStadiumIntNotExist = new ArrayList<>();
-        for (int i = 0; i < amountStadium; i++)
-            if (!listStaidumInt.contains(i))
-                listStadiumIntNotExist.add(i);
-        return listStadiumIntNotExist;
-    }
-
-    public int[] validateRoundArr(int[] round, int amountMatchInRound, int amountReferee, int amountStadium) {
-        int i = 0;
-        List<Integer> listRefereeInt = new ArrayList<>();
-        List<Integer> listStadiumInt = new ArrayList<>();
-        while (i < amountMatchInRound) {
-            if (round[i] == round[i + 1]) {
-                listRefereeInt.add(round[amountMatchInRound + i]);
-                listStadiumInt.add(round[amountMatchInRound * 2 + i]);
-                i++;
-            } else {
-                listRefereeInt.add(round[amountMatchInRound + i]);
-                listStadiumInt.add(round[amountMatchInRound * 2 + i]);
-                i++;
-//                System.out.println("size list" + listRefereeInt.size());
-                if (listRefereeInt.size() >= 2) {
-                    for (int j = i - listRefereeInt.size(); j < i - 1; j++) {
-//                        System.out.println("size"+ j);
-                        //VALIDATE TRONG TAI
-                        List<Integer> listRefereeIntExist = new ArrayList<>();
-                        List<Integer> listRefereeIntNotExist = initListRefereeInt(listRefereeInt, amountReferee);
-                        if (round[j + amountMatchInRound] == round[j + amountMatchInRound + 1]) {
-                            if (!listRefereeIntNotExist.isEmpty()) {
-                                int index = random.nextInt(listRefereeIntNotExist.size());
-                                round[j + amountMatchInRound] = listRefereeIntNotExist.get(index);
-                                listRefereeIntNotExist.remove(index);
-                            }
-                        } else {
-                            if (listRefereeIntExist.contains(round[j + amountMatchInRound])) {
-                                int index = random.nextInt(listRefereeIntNotExist.size());
-                                round[j + amountMatchInRound] = listRefereeIntNotExist.get(index);
-                                listRefereeIntNotExist.remove(index);
-                            } else {
-                                listRefereeIntExist.add(round[j + amountMatchInRound]);
-                            }
-                        }
-                        //VALIDATE SVD
-                        List<Integer> listStadiumIntExist = new ArrayList<>();
-                        List<Integer> listStadiumIntNotExist = initListStadiumInt(listStadiumInt, amountStadium);
-                        if (round[j + amountMatchInRound * 2] == round[j + amountMatchInRound * 2 + 1]) {
-                            if (!listStadiumIntNotExist.isEmpty()) {
-                                int index = random.nextInt(listStadiumIntNotExist.size());
-                                round[j + amountMatchInRound * 2] = listStadiumIntNotExist.get(index);
-                                listStadiumIntNotExist.remove(index);
-                            }
-                        } else {
-                            if (listStadiumIntExist.contains(round[j + amountMatchInRound * 2])) {
-                                int index = random.nextInt(listStadiumIntNotExist.size());
-                                round[j + amountMatchInRound * 2] = listStadiumIntNotExist.get(index);
-                                listStadiumIntNotExist.remove(index);
-                            } else {
-                                listStadiumIntExist.add(round[j + amountMatchInRound * 2]);
-                            }
-                        }
-                        listRefereeInt.clear();
-                        listStadiumInt.clear();
-                    }
-                } else {
-                    listRefereeInt.clear();
-                    listStadiumInt.clear();
-                }
-
-            }
-        }
-        return round;
-    }
-
-    public Population initRanDomQuanThe(int slCaThe, int amountReferee, int amountStadium, int amountMatchInRound, int amountTimeslot, int amountRound) {
+    public Population initPopulation(int slCaThe, int amountReferee, int amountMatchInRound, int amountTimeslot, int amountRound) {
         System.out.println("***** INIT *****");
         List<ScheduleGA> listScheduleGAGA = new ArrayList<>();
         for (int i = 0; i < slCaThe; i++) {
             int chromosome[] = new int[amountMatchInRound * amountRound * 3];
-            for (int p = 1; p <= 3; p++)
-                for (int r = 0; r < amountRound; r++) {
-                    List<Integer> listTimeSlot = initBoxTimeSlot(amountReferee, amountStadium, amountTimeslot);
-                    for (int m = 0; m < amountMatchInRound; m++) {
-                        if (p == 1) {
-                            int index = random.nextInt(listTimeSlot.size());
-                            chromosome[r * amountMatchInRound + m] = listTimeSlot.get(index);
-                            listTimeSlot.remove(index);
-                        }
-                        if (p == 2)
-                            chromosome[amountMatchInRound * amountRound + r * amountMatchInRound + m] = random.nextInt(amountReferee);
-                        if (p == 3)
-                            chromosome[amountMatchInRound * amountRound * 2 + r * amountMatchInRound + m] = random.nextInt(amountStadium);
-                    }
+            for (int r = 0; r < amountRound; r++) {
+                List<Integer> listTimeSlot = initBoxTimeSlot(amountReferee, amountTimeslot);
+                for (int m = 0; m < amountMatchInRound; m++) {
+                    int index = random.nextInt(listTimeSlot.size());
+                    chromosome[r * amountMatchInRound + m] = listTimeSlot.get(index);
+                    listTimeSlot.remove(index);
+                    chromosome[amountMatchInRound * amountRound + r * amountMatchInRound + m] = random.nextInt(amountReferee);
                 }
-            ScheduleGA scheduleGA = new ScheduleGA(chromosome, 0, 0);
+            }
+            ScheduleGA scheduleGA = new ScheduleGA(chromosome, 0, 0, 0, 0, 0);
             listScheduleGAGA.add(scheduleGA);
         }
         return new Population(listScheduleGAGA);
     }
 
-    public int constraintReferee(int[] round, int amountMatchInRound, int amountTimeslotInDay) {
-        int i = 0;
-        int count = 1;
-        int countARefereeInStadiums = 1;
+    public FitnessGA constraintClashReferee(int[] round, int amountMatchInRound) {
+        int totalConstraint = 0;
         int fitness = 0;
+        int i = 0;
+        List<Integer> listRefereeInt = new ArrayList<>();
+        while (i < amountMatchInRound) {
+            if (round[i] == round[i + 1]) {
+                listRefereeInt.add(round[amountMatchInRound + i]);
+                i++;
+            } else {
+                listRefereeInt.add(round[amountMatchInRound + i]);
+                i++;
+                if (listRefereeInt.size() >= 2)
+                    for (int j = i - listRefereeInt.size(); j < i - 1; j++) {
+                        //VALIDATE TRONG TAI
+                        if (round[j + amountMatchInRound] == round[j + amountMatchInRound + 1]) {
+                            fitness += 100;
+                            totalConstraint++;
+                        }
+                        listRefereeInt.clear();
+                    }
+                else
+                    listRefereeInt.clear();
+            }
+        }
+        return new FitnessGA(fitness, totalConstraint);
+    }
+
+    public FitnessGA constraintRefereeInDay(int[] round, int amountMatchInRound, int amountTimeslotInDay) {
+        int i = 0;
+        int fitness = 0;
+        int totalConstraint = 0;
         //SORT
-        for (int p = 1; p <= 3; p++)
+        for (int p = 1; p <= 2; p++)
             for (int t = 0; t < amountMatchInRound; t++) {
                 for (int k = 0; k < amountMatchInRound - 1; k++)
                     if (round[k] > round[k + 1]) {
+
                         int tmp = round[k];
                         round[k] = round[k + 1];
                         round[k + 1] = tmp;
-                        for (int l = 1; l <= 2; l++) {
-                            int tmp1 = round[k + amountMatchInRound * l];
-                            round[k + amountMatchInRound * l] = round[k + amountMatchInRound * l + 1];
-                            round[k + amountMatchInRound * l + 1] = tmp1;
-                        }
+
+                        int tmp1 = round[k + amountMatchInRound];
+                        round[k + amountMatchInRound] = round[k + amountMatchInRound + 1];
+                        round[k + amountMatchInRound + 1] = tmp1;
+
                     }
             }
-//        System.out.print("Sort: ");
-//        for (int j = 0; j < round.length; j++) {
-//            System.out.print(round[j] + " ");
-//        }
-//        System.out.println();
-        // Các khung giờ liên tiếp
+        int index = round[i] / amountTimeslotInDay;
+        List<Integer> listIndex = new ArrayList<>();
+        listIndex.add(i);
         while (i < amountMatchInRound - 1) {
-            if (round[i] == (round[i + 1] + 1) && round[i] % amountTimeslotInDay != 0 && round[i + amountMatchInRound] == round[i + amountMatchInRound + 1]) {
-                count++;
-                if (round[i + amountMatchInRound * 2] == round[i + amountMatchInRound * 2 + 1])
-                    countARefereeInStadiums++;
+            if (round[i + 1] / amountTimeslotInDay == index) {
+                listIndex.add(i + 1);
                 i++;
-            } else {
-                if (countARefereeInStadiums == 1) {
-                    if (count == 2)
-                        fitness += WeightConstraint.CONSECUTIVE_REFEREE_ONE_STADIUM;
-                    else if (count > 2)
-                        fitness += WeightConstraint.CONSECUTIVE_REFEREE_ONE_STADIUM + WeightConstraint.CONSECUTIVE_REFEREE_3;
-                } else {
-                    fitness += WeightConstraint.CONSECUTIVE_REFEREE_TWO_STADIUM;
+                if (i == (amountMatchInRound - 1)) {
+                    i++;
+                    if (listIndex.size() > 1) {
+                        for (int j = i - listIndex.size(); j < i - 1; j++) {
+                            // Ràng buộc trọng tài bắt 1 trận 1 ngày
+                            if (round[amountMatchInRound + j] == round[amountMatchInRound + j + 1]) {
+                                fitness += 10;
+                                totalConstraint++;
+                            }
+                        }
+                    }
                 }
-                i++;
-            }
-        }
-        int j = amountMatchInRound * 2;
-        int countReferee = 1;
-        while (j < amountMatchInRound * 3 - 1) {
-            if (round[j] == round[j + 1]) {
-                countReferee++;
-                j++;
             } else {
-                if (countReferee == 2)
-                    fitness += WeightConstraint.CONSECUTIVE_REFEREE_2;
-                if (countReferee > 2)
-                    fitness += WeightConstraint.CONSECUTIVE_REFEREE_3;
-                countReferee = 1;
-                j++;
+                i++;
+                if (listIndex.size() > 1) {
+                    for (int j = i - listIndex.size(); j < i - 1; j++) {
+                        // Ràng buộc trọng tài bắt 1 trận 1 ngày
+                        if (round[amountMatchInRound + j] == round[amountMatchInRound + j + 1]) {
+                            fitness += 10;
+                            totalConstraint++;
+                        }
+
+                    }
+                    listIndex.clear();
+                    listIndex.add(i);
+                    index = round[i] / amountTimeslotInDay;
+                } else {
+                    listIndex.clear();
+                    listIndex.add(i);
+                    index = round[i] / amountTimeslotInDay;
+                }
             }
+
         }
-        return fitness;
+        return new FitnessGA(fitness, totalConstraint);
     }
 
-    public int constraintSpaceTime(int[] round, int amountMatchInRound, int amountTimeslotInDay) {
+    public FitnessGA constraintSpaceTimeInRound(int[] round, int amountMatchInRound, int amountTimeslotInDay) {
         int fitness = 0;
+        int totalConstraint = 0;
+        //SORT
+        for (int p = 1; p <= 2; p++)
+            for (int t = 0; t < amountMatchInRound; t++) {
+                for (int k = 0; k < amountMatchInRound - 1; k++)
+                    if (round[k] > round[k + 1]) {
+
+                        int tmp = round[k];
+                        round[k] = round[k + 1];
+                        round[k + 1] = tmp;
+
+                        int tmp1 = round[k + amountMatchInRound];
+                        round[k + amountMatchInRound] = round[k + amountMatchInRound + 1];
+                        round[k + amountMatchInRound + 1] = tmp1;
+                    }
+            }
+        // Khoảng thời gian trống trong 1 tuần
         for (int i = 0; i < amountMatchInRound - 1; i++)
-            if (round[i + 1] - round[i] >= 2 * amountTimeslotInDay)
-                fitness += 100;
-        return fitness;
+            if (round[i + 1] - round[i] >= 2 * amountTimeslotInDay - 2) {
+                fitness += 1;
+                totalConstraint++;
+            }
+        return new FitnessGA(fitness, totalConstraint);
     }
 
-    public void selection() {
+    public FitnessGA constraintSpaceTimeInDay(int[] round, int amountMatchInRound, int amountTimeslotInDay) {
+        int i = 0;
+        int fitness = 0;
+        int totalConstraint = 0;
+        //SORT
+        for (int p = 1; p <= 2; p++)
+            for (int t = 0; t < amountMatchInRound; t++) {
+                for (int k = 0; k < amountMatchInRound - 1; k++)
+                    if (round[k] > round[k + 1]) {
 
+                        int tmp = round[k];
+                        round[k] = round[k + 1];
+                        round[k + 1] = tmp;
+
+                        int tmp1 = round[k + amountMatchInRound];
+                        round[k + amountMatchInRound] = round[k + amountMatchInRound + 1];
+                        round[k + amountMatchInRound + 1] = tmp1;
+
+                    }
+            }
+        int index = round[i] / amountTimeslotInDay;
+        List<Integer> listIndex = new ArrayList<>();
+        listIndex.add(i);
+        while (i < amountMatchInRound - 1) {
+            if (round[i + 1] / amountTimeslotInDay == index) {
+                listIndex.add(i + 1);
+                i++;
+                if (i == (amountMatchInRound - 1)) {
+                    i++;
+                    if (listIndex.size() > 1) {
+                        for (int j = i - listIndex.size(); j < i - 1; j++)
+                            // Ràng buộc khoảng thời gian trống trong 1 ngày
+                            if (round[j] != round[j + 1] && round[j + 1] != round[j] + 1) {
+                                fitness++;
+                                totalConstraint++;
+                            }
+                    }
+                }
+            } else {
+                i++;
+                if (listIndex.size() > 1) {
+                    for (int j = i - listIndex.size(); j < i - 1; j++)
+                        // Ràng buộc khoảng thời gian trống trong 1 ngày
+                        if (round[j] != round[j + 1] && round[j + 1] != round[j] + 1) {
+                            fitness++;
+                            totalConstraint++;
+                        }
+                    listIndex.clear();
+                    listIndex.add(i);
+                    index = round[i] / amountTimeslotInDay;
+                } else {
+                    listIndex.clear();
+                    listIndex.add(i);
+                    index = round[i] / amountTimeslotInDay;
+                }
+            }
+
+        }
+        return new FitnessGA(fitness, totalConstraint);
     }
 
+    //    public Population crossoverPopulation(Population population, int amountRound, int amountMatchInRound,
+//                                          int amountTimeslot, int amountReferee, int amountStadium,
+//                                          int mutationProbability) {
+//        Population newPopulation = new Population();
+//        List<ScheduleGA> scheduleGAS = population.getListScheduleGAGA();
+//        List<ScheduleGA> newScheduleGAS = new ArrayList<>();
+//        for (int i = 0; i < scheduleGAS.size(); i += 2) {
+//            int point1 = random.nextInt(amountMatchInRound * amountRound);
+//            int point2 = random.nextInt(amountMatchInRound * amountRound);
+//            while (point1 == point2)
+//                point2 = random.nextInt(amountMatchInRound * amountRound);
+//            if (point1 > point2) {
+//                int tmp = point1;
+//                point1 = point2;
+//                point2 = tmp;
+//            }
+//            int chromosomeParent1[] = scheduleGAS.get(i).getChromosome();
+//            int chromosomeParent2[] = scheduleGAS.get(i + 1).getChromosome();
+//            int newChromosome1[] = new int[amountMatchInRound * amountRound * 3];
+//            int newChromosome2[] = new int[amountMatchInRound * amountRound * 3];
+//            for (int r = 0; r < amountRound; r++) {
+//                for (int m = 0; m < amountMatchInRound; m++) {
+//                    if ((r * amountMatchInRound + m) < point1 || (r * amountMatchInRound + m) > point2) {
+//                        newChromosome1[r * amountMatchInRound + m] = chromosomeParent1[r * amountMatchInRound + m];
+//                        newChromosome1[amountMatchInRound * amountRound + r * amountMatchInRound + m] =
+//                                chromosomeParent1[amountMatchInRound * amountRound + r * amountMatchInRound + m];
+//                        newChromosome1[amountMatchInRound * amountRound * 2 + r * amountMatchInRound + m] =
+//                                chromosomeParent1[amountMatchInRound * amountRound * 2 + r * amountMatchInRound + m];
+//
+//                        newChromosome2[r * amountMatchInRound + m] = chromosomeParent2[r * amountMatchInRound + m];
+//                        newChromosome2[amountMatchInRound * amountRound + r * amountMatchInRound + m] =
+//                                chromosomeParent2[amountMatchInRound * amountRound + r * amountMatchInRound + m];
+//                        newChromosome2[amountMatchInRound * amountRound * 2 + r * amountMatchInRound + m] =
+//                                chromosomeParent2[amountMatchInRound * amountRound * 2 + r * amountMatchInRound + m];
+//                    }
+//                    if (r * amountMatchInRound + m >= point1 && r * amountMatchInRound + m <= point2) {
+//                        newChromosome1[r * amountMatchInRound + m] = chromosomeParent2[r * amountMatchInRound + m];
+//                        newChromosome1[amountMatchInRound * amountRound + r * amountMatchInRound + m] =
+//                                chromosomeParent2[amountMatchInRound * amountRound + r * amountMatchInRound + m];
+//                        newChromosome1[amountMatchInRound * amountRound * 2 + r * amountMatchInRound + m] =
+//                                chromosomeParent2[amountMatchInRound * amountRound * 2 + r * amountMatchInRound + m];
+//
+//                        newChromosome2[r * amountMatchInRound + m] = chromosomeParent1[r * amountMatchInRound + m];
+//                        newChromosome2[amountMatchInRound * amountRound + r * amountMatchInRound + m] =
+//                                chromosomeParent1[amountMatchInRound * amountRound + r * amountMatchInRound + m];
+//                        newChromosome2[amountMatchInRound * amountRound * 2 + r * amountMatchInRound + m] =
+//                                chromosomeParent1[amountMatchInRound * amountRound * 2 + r * amountMatchInRound + m];
+//                    }
+//                }
+//            }
+//            int mutationProbabilityIndividual1 = random.nextInt(100);
+//            if (mutationProbabilityIndividual1 < mutationProbability) {
+////                System.out.println("***MUTATION***");
+//                int indexMutation = random.nextInt(amountMatchInRound * amountRound - 1) + 1;
+//                newChromosome1[indexMutation - 1] = random.nextInt(amountTimeslot);
+//                newChromosome1[amountMatchInRound * amountRound + indexMutation - 1] = random.nextInt(amountReferee);
+//                newChromosome1[amountMatchInRound * amountRound * 2 + indexMutation - 1] = random.nextInt(amountStadium);
+//            }
+//            int mutationProbabilityIndividual2 = random.nextInt(100);
+//            if (mutationProbabilityIndividual2 < mutationProbability) {
+////                System.out.println("***MUTATION***");
+//                int indexMutation = random.nextInt(amountMatchInRound * amountRound - 1) + 1;
+//                newChromosome2[indexMutation - 1] = random.nextInt(amountTimeslot);
+//                newChromosome2[amountMatchInRound * amountRound + indexMutation - 1] = random.nextInt(amountReferee);
+//                newChromosome2[amountMatchInRound * amountRound * 2 + indexMutation - 1] = random.nextInt(amountStadium);
+//            }
+//            ScheduleGA scheduleGANew1 = new ScheduleGA(newChromosome1, 0, 0, 0);
+//            ScheduleGA scheduleGANew2 = new ScheduleGA(newChromosome2, 0, 0, 0);
+//            newScheduleGAS.add(scheduleGANew1);
+//            newScheduleGAS.add(scheduleGANew2);
+//        }
+//        newPopulation.setListScheduleGAGA(newScheduleGAS);
+//        return newPopulation;
+//    }
     public Population crossoverPopulation(Population population, int amountRound, int amountMatchInRound,
-                                          int amountTimeslot, int amountReferee, int amountStadium,
-                                          int mutationProbability) {
+                                          int amountTimeslot, int amountReferee, int mutationProbability) {
         Population newPopulation = new Population();
         List<ScheduleGA> scheduleGAS = population.getListScheduleGAGA();
         List<ScheduleGA> newScheduleGAS = new ArrayList<>();
+        int mask[] = new int[amountRound * amountMatchInRound * 3];
+        int N = amountRound * amountMatchInRound;
+        for (int i = 0; i < amountRound * amountMatchInRound * 3; i++) {
+            mask[i] = random.nextInt(2);
+        }
+//        System.out.println("******** MASK ********");
+//        System.out.print("MASK: ");
+//        for (int i = 0; i < amountRound * amountMatchInRound * 3; i++) {
+//            System.out.print(mask[i] + " ");
+//        }
+//        System.out.println();
         for (int i = 0; i < scheduleGAS.size(); i += 2) {
-            int point1 = random.nextInt(amountMatchInRound * amountRound);
-            int point2 = random.nextInt(amountMatchInRound * amountRound);
-            while (point1 == point2)
-                point2 = random.nextInt(amountMatchInRound * amountRound);
-            if (point1 > point2) {
-                int tmp = point1;
-                point1 = point2;
-                point2 = tmp;
-            }
             int chromosomeParent1[] = scheduleGAS.get(i).getChromosome();
             int chromosomeParent2[] = scheduleGAS.get(i + 1).getChromosome();
-            int newChromosome1[] = new int[amountMatchInRound * amountRound * 3];
-            int newChromosome2[] = new int[amountMatchInRound * amountRound * 3];
-            for (int r = 0; r < amountRound; r++) {
-                for (int m = 0; m < amountMatchInRound; m++) {
-                    if ((r * amountMatchInRound + m) < point1 || (r * amountMatchInRound + m) > point2) {
-                        newChromosome1[r * amountMatchInRound + m] = chromosomeParent1[r * amountMatchInRound + m];
-                        newChromosome1[amountMatchInRound * amountRound + r * amountMatchInRound + m] =
-                                chromosomeParent1[amountMatchInRound * amountRound + r * amountMatchInRound + m];
-                        newChromosome1[amountMatchInRound * amountRound * 2 + r * amountMatchInRound + m] =
-                                chromosomeParent1[amountMatchInRound * amountRound * 2 + r * amountMatchInRound + m];
-
-                        newChromosome2[r * amountMatchInRound + m] = chromosomeParent2[r * amountMatchInRound + m];
-                        newChromosome2[amountMatchInRound * amountRound + r * amountMatchInRound + m] =
-                                chromosomeParent2[amountMatchInRound * amountRound + r * amountMatchInRound + m];
-                        newChromosome2[amountMatchInRound * amountRound * 2 + r * amountMatchInRound + m] =
-                                chromosomeParent2[amountMatchInRound * amountRound * 2 + r * amountMatchInRound + m];
-                    }
-                    if (r * amountMatchInRound + m >= point1 && r * amountMatchInRound + m <= point2) {
-                        newChromosome1[r * amountMatchInRound + m] = chromosomeParent2[r * amountMatchInRound + m];
-                        newChromosome1[amountMatchInRound * amountRound + r * amountMatchInRound + m] =
-                                chromosomeParent2[amountMatchInRound * amountRound + r * amountMatchInRound + m];
-                        newChromosome1[amountMatchInRound * amountRound * 2 + r * amountMatchInRound + m] =
-                                chromosomeParent2[amountMatchInRound * amountRound * 2 + r * amountMatchInRound + m];
-
-                        newChromosome2[r * amountMatchInRound + m] = chromosomeParent1[r * amountMatchInRound + m];
-                        newChromosome2[amountMatchInRound * amountRound + r * amountMatchInRound + m] =
-                                chromosomeParent1[amountMatchInRound * amountRound + r * amountMatchInRound + m];
-                        newChromosome2[amountMatchInRound * amountRound * 2 + r * amountMatchInRound + m] =
-                                chromosomeParent1[amountMatchInRound * amountRound * 2 + r * amountMatchInRound + m];
+            int newChromosome1[] = new int[amountMatchInRound * amountRound * 2];
+            int newChromosome2[] = new int[amountMatchInRound * amountRound * 2];
+//
+//            System.out.print("PARENT 1: ");
+//            for (int l = 0; l < amountMatchInRound * amountRound * 2; l++) {
+//                System.out.print(chromosomeParent1[l] + " ");
+//            }
+//            System.out.println();
+//            System.out.print("PARENT 2: ");
+//            for (int l = 0; l < amountMatchInRound * amountRound * 2; l++) {
+//                System.out.print(chromosomeParent2[l] + " ");
+//            }
+//            System.out.println();
+            for (int p = 0; p < 2; p++) {
+                for (int r = 0; r < amountRound; r++) {
+                    for (int m = 0; m < amountMatchInRound; m++) {
+                        if (mask[N * p + r * amountMatchInRound + m] == 1) {
+                            newChromosome1[N * p + r * amountMatchInRound + m] =
+                                    chromosomeParent1[N * p + r * amountMatchInRound + m];
+                            newChromosome2[amountMatchInRound * amountRound * p + r * amountMatchInRound + m] =
+                                    chromosomeParent2[N * p + r * amountMatchInRound + m];
+                        } else {
+                            newChromosome1[N * p + r * amountMatchInRound + m] =
+                                    chromosomeParent2[N * p + r * amountMatchInRound + m];
+                            newChromosome2[amountMatchInRound * amountRound * p + r * amountMatchInRound + m] =
+                                    chromosomeParent1[N * p + r * amountMatchInRound + m];
+                        }
                     }
                 }
             }
+//            System.out.print("CON 1: ");
+//            for (int l = 0; l < amountMatchInRound * amountRound * 2; l++) {
+//                System.out.print(newChromosome1[l] + " ");
+//            }
+//            System.out.println();
             int mutationProbabilityIndividual1 = random.nextInt(100);
             if (mutationProbabilityIndividual1 < mutationProbability) {
+
+                int indexMutation = random.nextInt(N ) ;
+                int indexGenSelected = random.nextInt(N) ;
 //                System.out.println("***MUTATION***");
-                int indexMutation = random.nextInt(amountMatchInRound * amountRound - 1) + 1;
-                newChromosome1[indexMutation - 1] = random.nextInt(amountTimeslot);
-                newChromosome1[amountMatchInRound * amountRound + indexMutation - 1] = random.nextInt(amountReferee);
-                newChromosome1[amountMatchInRound * amountRound * 2 + indexMutation - 1] = random.nextInt(amountStadium);
+//                System.out.println("INDEX MUTATION: " + indexMutation);
+//                System.out.println("INDEX GEN SELECTED TO MUTATION: " + indexGenSelected);
+                while (indexMutation == indexGenSelected)
+                    indexGenSelected = random.nextInt(N) ;
+                newChromosome1[indexMutation] = newChromosome1[indexGenSelected ];
+                newChromosome1[N + indexMutation] = newChromosome1[N+indexGenSelected ];
+//                System.out.print("CON 1 SAU KHI DOT BIEN: ");
+//                for (int l = 0; l < amountMatchInRound * amountRound * 2; l++) {
+//                    System.out.print(newChromosome1[l] + " ");
+//                }
+//                System.out.println();
+
             }
+//            System.out.print("CON 2: ");
+//            for (int l = 0; l < amountMatchInRound * amountRound * 2; l++) {
+//                System.out.print(newChromosome2[l] + " ");
+//            }
+//            System.out.println();
             int mutationProbabilityIndividual2 = random.nextInt(100);
             if (mutationProbabilityIndividual2 < mutationProbability) {
+
+                int indexMutation = random.nextInt(N - 1) + 1;
+                int indexGenSelected = random.nextInt(N - 1) + 1;
 //                System.out.println("***MUTATION***");
-                int indexMutation = random.nextInt(amountMatchInRound * amountRound - 1) + 1;
-                newChromosome2[indexMutation - 1] = random.nextInt(amountTimeslot);
-                newChromosome2[amountMatchInRound * amountRound + indexMutation - 1] = random.nextInt(amountReferee);
-                newChromosome2[amountMatchInRound * amountRound * 2 + indexMutation - 1] = random.nextInt(amountStadium);
+//                System.out.println("INDEX MUTATION: " + indexMutation);
+//                System.out.println("INDEX GEN SELECTED TO MUTATION: " + indexGenSelected);
+                while (indexMutation == indexGenSelected)
+                    indexGenSelected = random.nextInt(N - 1) + 1;
+                newChromosome2[indexMutation - 1] = newChromosome2[indexGenSelected - 1];
+                newChromosome2[N + indexMutation - 1] = newChromosome2[N+indexGenSelected - 1];
+//                System.out.print("CON 2 SAU KHI DOT BIEN : ");
+//                for (int l = 0; l < amountMatchInRound * amountRound * 2; l++) {
+//                    System.out.print(newChromosome2[l] + " ");
+//                }
+//                System.out.println();
             }
-            ScheduleGA scheduleGANew1 = new ScheduleGA(newChromosome1, 0, 0);
-            ScheduleGA scheduleGANew2 = new ScheduleGA(newChromosome2, 0, 0);
+//            System.out.println();
+
+            ScheduleGA scheduleGANew1 = new ScheduleGA(newChromosome1, 0, 0, 0, 0, 0);
+            ScheduleGA scheduleGANew2 = new ScheduleGA(newChromosome2, 0, 0, 0, 0, 0);
             newScheduleGAS.add(scheduleGANew1);
             newScheduleGAS.add(scheduleGANew2);
         }
@@ -284,12 +402,22 @@ public class GeneticAlgorithm {
         for (ScheduleGA i : population.getListScheduleGAGA()) {
             Map<Integer, int[]> map = mapRound(amountRound, amountMatchInRound, i);
             int fitness = 0;
+            int totalConstraintClashRefereee = 0;
+            int totalConstraintRefereeInDay = 0;
+            int totalConstraintSpaceTimeInRound = 0;
+            int totalConstraintSpaceTimeInDay = 0;
             for (Map.Entry<Integer, int[]> entry : map.entrySet()) {
                 int value[] = entry.getValue();
-                fitness += (constraintReferee(value, amountMatchInRound, amountTimeslotInday)
-                        + constraintSpaceTime(value, amountMatchInRound, amountTimeslotInday));
+                fitness += ( constraintClashReferee(value, amountMatchInRound).getFitness()
+                        + constraintRefereeInDay(value, amountMatchInRound, amountTimeslotInday).getFitness()
+                        + constraintSpaceTimeInRound(value, amountMatchInRound, amountTimeslotInday).getFitness()
+                        + constraintSpaceTimeInDay(value, amountMatchInRound, amountTimeslotInday).getFitness());
+                totalConstraintClashRefereee += constraintClashReferee(value, amountMatchInRound).getTotalConstraint();
+                totalConstraintRefereeInDay += constraintRefereeInDay(value, amountMatchInRound, amountTimeslotInday).getTotalConstraint();
+                totalConstraintSpaceTimeInRound += constraintSpaceTimeInRound(value, amountMatchInRound, amountTimeslotInday).getTotalConstraint();
+                totalConstraintRefereeInDay += constraintSpaceTimeInDay(value, amountMatchInRound, amountTimeslotInday).getFitness();
             }
-            ScheduleGA scheduleGA = new ScheduleGA(i.getChromosome(), fitness, 0);
+            ScheduleGA scheduleGA = new ScheduleGA(i.getChromosome(), (float) 1 / (1 + fitness), totalConstraintClashRefereee, totalConstraintRefereeInDay, totalConstraintSpaceTimeInRound,totalConstraintSpaceTimeInDay);
             scheduleGAS.add(scheduleGA);
         }
         scheduleGAS.sort(new Comparator<ScheduleGA>() {
@@ -297,7 +425,7 @@ public class GeneticAlgorithm {
             public int compare(ScheduleGA o1, ScheduleGA o2) {
                 if (o1.getFitness() == o2.getFitness())
                     return 0;
-                else if (o1.getFitness() > o2.getFitness())
+                else if (o1.getFitness() < o2.getFitness())
                     return 1;
                 else
                     return -1;
@@ -310,56 +438,47 @@ public class GeneticAlgorithm {
         Map<Integer, int[]> map = new HashMap<>();
         int[] chromosome = scheduleGA.getChromosome();
         for (int r = 0; r < amountRound; r++) {
-            int a[] = new int[amountMatchInRound * 3];
+            int a[] = new int[amountMatchInRound * 2];
             for (int m = 0; m < amountMatchInRound; m++) {
                 a[m] = chromosome[r * amountMatchInRound + m];
                 a[amountMatchInRound + m] = chromosome[amountMatchInRound * amountRound + r * amountMatchInRound + m];
-                a[amountMatchInRound * 2 + m] = chromosome[amountMatchInRound * amountRound * 2 + r * amountMatchInRound + m];
             }
             map.put(r + 1, a);
         }
         return map;
     }
 
-    public Map<Integer, int[]> solveGeneticAlgorithm(int amountRound, int amountMatchInRound) {
-        ScheduleGA scheduleGA = new ScheduleGA();
-
-        return mapRound(amountRound, amountMatchInRound, scheduleGA);
-    }
-
     public static void main(String[] args) {
         GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
-        int slCaThe = 10;
-        int amountReferee = 15;
-        int amountStadium = 10;
+        int slCaThe = 50;
+        int amountReferee = 5;
         int amountMatchInRound = 5;
-        int amountTimeslot = 21;
+        int amountTimeslot = 9;
         int amountTimeslotInday = 3;
         int amountRound = amountMatchInRound * 2 - 1;
-        int mutationProbability = 10;
-        Population population = geneticAlgorithm.initRanDomQuanThe(slCaThe, amountReferee, amountStadium, amountMatchInRound, amountTimeslot, amountRound);
+        int mutationProbability = 5;
+        Population population = geneticAlgorithm.initPopulation(slCaThe, amountReferee, amountMatchInRound, amountTimeslot, amountRound);
 
-//        for (ScheduleGAv4 i : population.getListScheduleGA()) {
-//            Map<Integer, int[]> map = solveGAv4.mapRound(amountRound, amountMatchInRound, i);
-//            int fitness = 0;
-//            for (Map.Entry<Integer, int[]> entry : map.entrySet()) {
-//                System.out.println("---- " + entry.getKey() + " ----");
-//                int value[] = entry.getValue();
-//                for (int j = 0; j < value.length; j++)
-//                    System.out.print(value[j] + " ");
-//
-//                fitness += solveGAv4.constraintReferee(value, amountMatchInRound, amountTimeslotInday);
-//                System.out.println("----------");
-//            }
-//            System.out.println("fitness: " + fitness);
-//            ScheduleGAv4 scheduleGAv4 = new ScheduleGAv4(i.getChromosome(), fitness);
-//            scheduleGAv4s.add(scheduleGAv4);
-//        }
-//        population.setListScheduleGA(scheduleGAv4s);
         population.setListScheduleGAGA(geneticAlgorithm.calcuFitness(population, amountRound, amountMatchInRound, amountTimeslotInday).getListScheduleGAGA());
         System.out.println("*******************FITNESS******************");
-        for (ScheduleGA i : population.getListScheduleGAGA()) {
+
+        System.out.println("*******************CROSSOVER******************");
+        List<ScheduleGA> scheduleGAS = new ArrayList<>();
+        float fitnessBest = population.getListScheduleGAGA().get(0).getFitness();
+        int count = 0;
+        Population crossoverPopulation = population;
+        while (fitnessBest < 1.0) {
+            crossoverPopulation = geneticAlgorithm.crossoverPopulation(population, amountRound, amountMatchInRound, amountTimeslot, amountReferee, mutationProbability);
+            crossoverPopulation = geneticAlgorithm.calcuFitness(crossoverPopulation, amountRound, amountMatchInRound, amountTimeslotInday);
+            fitnessBest = crossoverPopulation.getListScheduleGAGA().get(0).getFitness();
+            count++;
+            if (count % 100 == 0) {
+                System.out.println("fitnessBest: " + count + " : " + fitnessBest);
+            }
+        }
+        for (ScheduleGA i : crossoverPopulation.getListScheduleGAGA()) {
             Map<Integer, int[]> map = geneticAlgorithm.mapRound(amountRound, amountMatchInRound, i);
+//            System.out.println("errorStrong: " + i.getTotalConstraintStrongReferee() + " errorReferee: " + i.getTotalConstraintReferee() + " errorSpace: " + i.getTotalConstraintSpace());
             for (Map.Entry<Integer, int[]> entry : map.entrySet()) {
                 System.out.println("---- " + entry.getKey() + " ----");
                 int value[] = entry.getValue();
@@ -369,17 +488,10 @@ public class GeneticAlgorithm {
             }
             System.out.println("FITNESS: " + i.getFitness());
         }
-
-        System.out.println("*******************CROSSOVER******************");
-        List<ScheduleGA> scheduleGAS = new ArrayList<>();
-        int fitnessBest = population.getListScheduleGAGA().get(0).getFitness();
-        while (fitnessBest > 100) {
-            Population crossoverPopulation = geneticAlgorithm.crossoverPopulation(population, amountRound, amountMatchInRound, amountTimeslot, amountReferee, amountStadium, mutationProbability);
-            crossoverPopulation.setListScheduleGAGA(geneticAlgorithm.calcuFitness(crossoverPopulation, amountRound, amountMatchInRound, amountTimeslotInday).getListScheduleGAGA());
-            fitnessBest = crossoverPopulation.getListScheduleGAGA().get(0).getFitness();
-
-        }
         System.out.println("fitnessBest: " + fitnessBest);
+
+//        int test[] = {9 ,2, 11 ,7, 5 ,3 ,2, 1, 0 ,0};
+//        System.out.println(geneticAlgorithm.constraintReferee(test, amountMatchInRound, amountTimeslotInday).getFitness());
     }
 }
 
