@@ -44,9 +44,10 @@ public class ScheduleController {
     public ResponseEntity<List<Schedule>> initPopulation(@RequestParam(required = false) Integer tournamentId,
                                                           @RequestParam(required = false) Integer amountIndividual,
                                                           @RequestParam(required = false) Integer mutationProbability,
+                                                          @RequestParam(required = false) Integer crossoverProbability,
                                                           @RequestParam(required = false) boolean crossover){
         System.out.println("INIT");
-        return new ResponseEntity<>(scheduleService.initPopulationState(tournamentId,amountIndividual, mutationProbability,crossover),HttpStatus.OK);
+        return new ResponseEntity<>(scheduleService.initPopulationState(tournamentId,amountIndividual, mutationProbability,crossoverProbability,crossover),HttpStatus.OK);
     }
 
     @GetMapping("/schedule/{id}")

@@ -27,7 +27,7 @@ public class ScheduleService {
     private final GeneticAlgorithm geneticAlgorithm;
     private final InitCoupleMatch initCoupleMatch;
 
-    public List<Schedule> initPopulationState(Integer tournamentId, Integer amountIndividual, Integer mutationProbability, boolean crossover) {
+    public List<Schedule> initPopulationState(Integer tournamentId, Integer amountIndividual, Integer mutationProbability, Integer crossoverProbability, boolean crossover) {
         Optional<Tournament> tournamentOptional = tournamentRepository.findById(tournamentId);
         Tournament tournament = tournamentOptional.get();
 //        initCoupleMatch.initMatch(tournament);
@@ -48,8 +48,8 @@ public class ScheduleService {
         Population population = geneticAlgorithm.initPopulation(amountIndividual, amountReferee, amountMatchInRounds, amountTimeslot, amountRounds);
         population.setListScheduleGAGA(geneticAlgorithm.calcuFitness(population, amountRounds, amountMatchInRounds, amountTimeslotInDay).getListScheduleGAGA());
         if (crossover) {
-            List<ScheduleGA> scheduleGAS = crossoverState(population, amountRounds, amountMatchInRounds, amountTimeslot, amountReferee
-                    , mutationProbability, amountTimeslotInDay);
+            List<ScheduleGA> scheduleGAS = crossoverState(population, amountRounds, amountMatchInRounds, amountTimeslot, amountReferee,amountTimeslotInDay
+                    , mutationProbability,crossoverProbability );
             for (int i = 0; i < scheduleGAS.size(); i++) {
                 Schedule schedule = convertToSchedule(scheduleGAS.get(i), tournament);
                 schedules.add(schedule);
@@ -66,14 +66,14 @@ public class ScheduleService {
     }
 
     public List<ScheduleGA> crossoverState(Population population, int amountRound, int amountMatchInRound,
-                                           int amountTimeslot, int amountReferee, int mutationProbability, int amountTimeslotInDay) {
+                                           int amountTimeslot, int amountReferee, int amountTimeslotInDay, int mutationProbability,int crossoverProbability ) {
         Population crossoverPopulation = geneticAlgorithm.crossoverPopulation(population, amountRound, amountMatchInRound,
-                amountTimeslot, amountReferee, mutationProbability);
+                amountTimeslot, amountReferee, mutationProbability , crossoverProbability);
         float fitnessBest = population.getListScheduleGAGA().get(0).getFitness();
         int count = 0;
         while (fitnessBest < 1.0) {
             count++;
-            crossoverPopulation = geneticAlgorithm.crossoverPopulation(population, amountRound, amountMatchInRound, amountTimeslot, amountReferee, mutationProbability);
+            crossoverPopulation = geneticAlgorithm.crossoverPopulation(population, amountRound, amountMatchInRound, amountTimeslot, amountReferee, mutationProbability, crossoverProbability);
             crossoverPopulation.setListScheduleGAGA(geneticAlgorithm.calcuFitness(crossoverPopulation, amountRound,
                     amountMatchInRound, amountTimeslotInDay).getListScheduleGAGA());
             fitnessBest = crossoverPopulation.getListScheduleGAGA().get(0).getFitness();
