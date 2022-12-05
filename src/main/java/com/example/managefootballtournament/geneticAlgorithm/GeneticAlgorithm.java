@@ -41,25 +41,52 @@ public class GeneticAlgorithm {
         int fitness = 0;
         int i = 0;
         List<Integer> listRefereeInt = new ArrayList<>();
-        while (i < amountMatchInRound) {
+        //SORT
+        for (int p = 1; p <= 2; p++)
+            for (int t = 0; t < amountMatchInRound; t++) {
+                for (int k = 0; k < amountMatchInRound - 1; k++)
+                    if (round[k] > round[k + 1]) {
+
+                        int tmp = round[k];
+                        round[k] = round[k + 1];
+                        round[k + 1] = tmp;
+
+                        int tmp1 = round[k + amountMatchInRound];
+                        round[k + amountMatchInRound] = round[k + amountMatchInRound + 1];
+                        round[k + amountMatchInRound + 1] = tmp1;
+                    }
+            }
+        int count=0;
+        while (i < amountMatchInRound-1) {
             if (round[i] == round[i + 1]) {
-                listRefereeInt.add(round[amountMatchInRound + i]);
+                count++;
                 i++;
+                if(i==amountMatchInRound-1){
+                    i++;
+                    for (int j = i - count; j < i - 1; j++) {
+                        //VALIDATE TRONG TAI
+                        if (round[j + amountMatchInRound] == round[j + amountMatchInRound + 1]) {
+                            fitness += 100;
+                            totalConstraint++;
+                        }
+                        count=0;
+                    }
+
+                }
             } else {
                 listRefereeInt.add(round[amountMatchInRound + i]);
                 i++;
-                if (listRefereeInt.size() >= 2)
+                if (count > 1)
                     for (int j = i - listRefereeInt.size(); j < i - 1; j++) {
                         //VALIDATE TRONG TAI
                         if (round[j + amountMatchInRound] == round[j + amountMatchInRound + 1]) {
                             fitness += 100;
                             totalConstraint++;
                         }
-                        listRefereeInt.clear();
+                        count =0;
                     }
-                else
-                    listRefereeInt.clear();
             }
+
         }
         return new FitnessGA(fitness, totalConstraint);
     }
@@ -84,17 +111,17 @@ public class GeneticAlgorithm {
 
                     }
             }
-        int index = round[i] / amountTimeslotInDay;
-        List<Integer> listIndex = new ArrayList<>();
-        listIndex.add(i);
+        int day = round[i] / amountTimeslotInDay;
+
+        int count=1;
         while (i < amountMatchInRound - 1) {
-            if (round[i + 1] / amountTimeslotInDay == index) {
-                listIndex.add(i + 1);
+            if (round[i + 1] / amountTimeslotInDay == day) {
+                count ++;
                 i++;
                 if (i == (amountMatchInRound - 1)) {
                     i++;
-                    if (listIndex.size() > 1) {
-                        for (int j = i - listIndex.size(); j < i - 1; j++) {
+                    if (count > 1) {
+                        for (int j = i - count; j < i - 1; j++) {
                             // Ràng buộc trọng tài bắt 1 trận 1 ngày
                             if (round[amountMatchInRound + j] == round[amountMatchInRound + j + 1]) {
                                 fitness += 10;
@@ -105,24 +132,20 @@ public class GeneticAlgorithm {
                 }
             } else {
                 i++;
-                if (listIndex.size() > 1) {
-                    for (int j = i - listIndex.size(); j < i - 1; j++) {
+                if (count > 1) {
+                    for (int j = i - count; j < i - 1; j++)
                         // Ràng buộc trọng tài bắt 1 trận 1 ngày
                         if (round[amountMatchInRound + j] == round[amountMatchInRound + j + 1]) {
                             fitness += 10;
                             totalConstraint++;
                         }
-                    }
-                    listIndex.clear();
-                    listIndex.add(i);
-                    index = round[i] / amountTimeslotInDay;
+                    count=1;
+                    day = round[i] / amountTimeslotInDay;
                 } else {
-                    listIndex.clear();
-                    listIndex.add(i);
-                    index = round[i] / amountTimeslotInDay;
+                    count =1;
+                    day = round[i] / amountTimeslotInDay;
                 }
             }
-
         }
         return new FitnessGA(fitness, totalConstraint);
     }
@@ -175,16 +198,15 @@ public class GeneticAlgorithm {
                     }
             }
         int index = round[i] / amountTimeslotInDay;
-        List<Integer> listIndex = new ArrayList<>();
-        listIndex.add(i);
+        int count =1;
         while (i < amountMatchInRound - 1) {
             if (round[i + 1] / amountTimeslotInDay == index) {
-                listIndex.add(i + 1);
+                count++;
                 i++;
                 if (i == (amountMatchInRound - 1)) {
                     i++;
-                    if (listIndex.size() > 1) {
-                        for (int j = i - listIndex.size(); j < i - 1; j++)
+                    if (count > 1) {
+                        for (int j = i - count; j < i - 1; j++)
                             // Ràng buộc khoảng thời gian trống trong 1 ngày
                             if (round[j] != round[j + 1] && round[j + 1] != round[j] + 1) {
                                 fitness++;
@@ -194,19 +216,17 @@ public class GeneticAlgorithm {
                 }
             } else {
                 i++;
-                if (listIndex.size() > 1) {
-                    for (int j = i - listIndex.size(); j < i - 1; j++)
+                if (count > 1) {
+                    for (int j = i - count; j < i - 1; j++)
                         // Ràng buộc khoảng thời gian trống trong 1 ngày
                         if (round[j] != round[j + 1] && round[j + 1] != round[j] + 1) {
                             fitness++;
                             totalConstraint++;
                         }
-                    listIndex.clear();
-                    listIndex.add(i);
+                    count=1;
                     index = round[i] / amountTimeslotInDay;
                 } else {
-                    listIndex.clear();
-                    listIndex.add(i);
+                    count=1;
                     index = round[i] / amountTimeslotInDay;
                 }
             }
@@ -426,6 +446,7 @@ public class GeneticAlgorithm {
             ScheduleGA scheduleGA = new ScheduleGA(i.getChromosome(), (float) 1 / (1 + fitness), totalConstraintClashRefereee, totalConstraintRefereeInDay, totalConstraintSpaceTimeInRound,totalConstraintSpaceTimeInDay);
             scheduleGAS.add(scheduleGA);
         }
+        //Sap xep theo do thich nghi giam dan
         scheduleGAS.sort(new Comparator<ScheduleGA>() {
             @Override
             public int compare(ScheduleGA o1, ScheduleGA o2) {

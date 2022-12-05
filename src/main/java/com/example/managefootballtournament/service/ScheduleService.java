@@ -71,7 +71,8 @@ public class ScheduleService {
                 amountTimeslot, amountReferee, mutationProbability , crossoverProbability);
         float fitnessBest = population.getListScheduleGAGA().get(0).getFitness();
         int count = 0;
-        while (fitnessBest < 1.0) {
+        double checkpoint =1L;
+        while (fitnessBest < checkpoint) {
             count++;
             crossoverPopulation = geneticAlgorithm.crossoverPopulation(population, amountRound, amountMatchInRound, amountTimeslot, amountReferee, mutationProbability, crossoverProbability);
             crossoverPopulation.setListScheduleGAGA(geneticAlgorithm.calcuFitness(crossoverPopulation, amountRound,
@@ -79,6 +80,8 @@ public class ScheduleService {
             fitnessBest = crossoverPopulation.getListScheduleGAGA().get(0).getFitness();
             if (count % 100 == 0)
                 System.out.println(count + ":" + fitnessBest);
+            if(count>=50000)
+                checkpoint=0.9;
         }
         System.out.println("fitnessBest: " + fitnessBest);
         return crossoverPopulation.getListScheduleGAGA();
