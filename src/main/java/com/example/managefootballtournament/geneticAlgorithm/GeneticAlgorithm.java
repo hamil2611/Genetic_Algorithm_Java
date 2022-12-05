@@ -197,10 +197,10 @@ public class GeneticAlgorithm {
 
                     }
             }
-        int index = round[i] / amountTimeslotInDay;
+        int day = round[i] / amountTimeslotInDay;
         int count =1;
         while (i < amountMatchInRound - 1) {
-            if (round[i + 1] / amountTimeslotInDay == index) {
+            if (round[i + 1] / amountTimeslotInDay == day) {
                 count++;
                 i++;
                 if (i == (amountMatchInRound - 1)) {
@@ -224,10 +224,10 @@ public class GeneticAlgorithm {
                             totalConstraint++;
                         }
                     count=1;
-                    index = round[i] / amountTimeslotInDay;
+                    day = round[i] / amountTimeslotInDay;
                 } else {
                     count=1;
-                    index = round[i] / amountTimeslotInDay;
+                    day = round[i] / amountTimeslotInDay;
                 }
             }
 
