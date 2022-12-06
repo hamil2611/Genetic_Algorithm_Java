@@ -30,7 +30,7 @@ public class GeneticAlgorithm {
                     chromosome[amountMatchInRound * amountRound + r * amountMatchInRound + m] = random.nextInt(amountReferee);
                 }
             }
-            ScheduleGA scheduleGA = new ScheduleGA(chromosome, 0, 0, 0, 0, 0);
+            ScheduleGA scheduleGA = new ScheduleGA(chromosome, 0, 0, 0, 0, 0,"",0);
             listScheduleGAGA.add(scheduleGA);
         }
         return new Population(listScheduleGAGA);
@@ -414,8 +414,8 @@ public class GeneticAlgorithm {
                 newChromosome1 = chromosomeParent1;
                 newChromosome2 = chromosomeParent2;
             }
-            ScheduleGA scheduleGANew1 = new ScheduleGA(newChromosome1, 0, 0, 0, 0, 0);
-            ScheduleGA scheduleGANew2 = new ScheduleGA(newChromosome2, 0, 0, 0, 0, 0);
+            ScheduleGA scheduleGANew1 = new ScheduleGA(newChromosome1, 0, 0, 0, 0, 0,"",0);
+            ScheduleGA scheduleGANew2 = new ScheduleGA(newChromosome2, 0, 0, 0, 0, 0,"",0);
             newScheduleGAS.add(scheduleGANew1);
             newScheduleGAS.add(scheduleGANew2);
         }
@@ -443,9 +443,9 @@ public class GeneticAlgorithm {
                 totalConstraintSpaceTimeInRound += constraintSpaceTimeInRound(value, amountMatchInRound, amountTimeslotInday).getTotalConstraint();
                 totalConstraintRefereeInDay += constraintSpaceTimeInDay(value, amountMatchInRound, amountTimeslotInday).getFitness();
             }
-            ScheduleGA scheduleGA = new ScheduleGA(i.getChromosome(), (float) 1 / (1 + fitness), totalConstraintClashRefereee, totalConstraintRefereeInDay, totalConstraintSpaceTimeInRound,totalConstraintSpaceTimeInDay);
+            ScheduleGA scheduleGA = new ScheduleGA(i.getChromosome(), (float) 1 / (1 + fitness), totalConstraintClashRefereee, totalConstraintRefereeInDay, totalConstraintSpaceTimeInRound,totalConstraintSpaceTimeInDay,"",0);
             scheduleGAS.add(scheduleGA);
-        }
+       }
         //Sap xep theo do thich nghi giam dan
         scheduleGAS.sort(new Comparator<ScheduleGA>() {
             @Override

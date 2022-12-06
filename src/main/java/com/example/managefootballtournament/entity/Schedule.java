@@ -28,6 +28,10 @@ public class Schedule {
     private int totalConstraintSpaceInRound;
     @Column(name = "total_space_in_day")
     private int totalConstraintSpaceInDay;
+    @Column(name = "run_time")
+    private String runTime;
+    @Column(name = "amount_generation")
+    private int amountGeneration;
 
     @OneToMany(mappedBy = "schedule",cascade = CascadeType.ALL)
 
