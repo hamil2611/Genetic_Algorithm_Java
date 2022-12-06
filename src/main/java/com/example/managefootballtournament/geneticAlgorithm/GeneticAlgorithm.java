@@ -53,7 +53,7 @@ public class GeneticAlgorithm {
                     for (int j = i - count; j < i - 1; j++) {
                         //VALIDATE TRONG TAI
                         if (round[j + amountMatchInRound] == round[j + amountMatchInRound + 1]) {
-                            fitness += 100;
+                            fitness += 300;
                             totalConstraint++;
                         }
                         count=0;
@@ -67,7 +67,7 @@ public class GeneticAlgorithm {
                     for (int j = i - listRefereeInt.size(); j < i - 1; j++) {
                         //VALIDATE TRONG TAI
                         if (round[j + amountMatchInRound] == round[j + amountMatchInRound + 1]) {
-                            fitness += 100;
+                            fitness += 300;
                             totalConstraint++;
                         }
                         count =0;
@@ -96,7 +96,7 @@ public class GeneticAlgorithm {
                         for (int j = i - count; j < i - 1; j++) {
                             // Ràng buộc trọng tài bắt 1 trận 1 ngày
                             if (round[amountMatchInRound + j] == round[amountMatchInRound + j + 1]) {
-                                fitness += 10;
+                                fitness += 50;
                                 totalConstraint++;
                             }
                         }
@@ -108,7 +108,7 @@ public class GeneticAlgorithm {
                     for (int j = i - count; j < i - 1; j++)
                         // Ràng buộc trọng tài bắt 1 trận 1 ngày
                         if (round[amountMatchInRound + j] == round[amountMatchInRound + j + 1]) {
-                            fitness += 10;
+                            fitness += 50;
                             totalConstraint++;
                         }
                     count=1;
@@ -130,7 +130,7 @@ public class GeneticAlgorithm {
         // Khoảng thời gian trống trong 1 tuần
         for (int i = 0; i < amountMatchInRound - 1; i++)
             if (round[i + 1] - round[i] >= 2 * amountTimeslotInDay - 2) {
-                fitness += 1;
+                fitness += 10;
                 totalConstraint++;
             }
         return new FitnessGA(fitness, totalConstraint);
@@ -247,8 +247,7 @@ public class GeneticAlgorithm {
 //                System.out.println("INDEX GEN SELECTED TO MUTATION: " + indexGenSelected);
                     while (indexMutation == indexGenSelected)
                         indexGenSelected = random.nextInt(N) ;
-                    newChromosome1[indexMutation] = newChromosome1[indexGenSelected ];
-                    newChromosome1[N + indexMutation] = newChromosome1[N+indexGenSelected ];
+                    insert(newChromosome1,indexMutation,newChromosome1[indexGenSelected]);
 //                System.out.print("CON 1 SAU KHI DOT BIEN: ");
 //                for (int l = 0; l < amountMatchInRound * amountRound * 2; l++) {
 //                    System.out.print(newChromosome1[l] + " ");
@@ -271,8 +270,7 @@ public class GeneticAlgorithm {
 //                System.out.println("INDEX GEN SELECTED TO MUTATION: " + indexGenSelected);
                     while (indexMutation == indexGenSelected)
                         indexGenSelected = random.nextInt(N - 1) + 1;
-                    newChromosome2[indexMutation - 1] = newChromosome2[indexGenSelected - 1];
-                    newChromosome2[N + indexMutation - 1] = newChromosome2[N+indexGenSelected - 1];
+                    insert(newChromosome2,indexMutation,newChromosome2[indexGenSelected]);
 //                System.out.print("CON 2 SAU KHI DOT BIEN : ");
 //                for (int l = 0; l < amountMatchInRound * amountRound * 2; l++) {
 //                    System.out.print(newChromosome2[l] + " ");
@@ -361,6 +359,22 @@ public class GeneticAlgorithm {
 
                     }
             }
+    }
+    public void insert(int [] chromosome, int indexGenSelected, int value) {
+        int n = chromosome.length/2;
+        int [] tmp = new int [n*2];
+        for(int i=0;i<indexGenSelected;i++){
+            tmp[i]=chromosome[i];
+            tmp[n+i]=chromosome[n+i];
+        }
+
+        tmp[indexGenSelected]= value;
+        for (int i=indexGenSelected+1;i<n;i++){
+            tmp[i] = chromosome[i-1];
+            tmp[n+i] = chromosome[n+i-1];
+        }
+        for(int i=0;i<n;i++)
+            chromosome[i]=tmp[i];
     }
     public static void main(String[] args) {
         GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
