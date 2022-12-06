@@ -20,7 +20,7 @@ public class GeneticAlgorithm {
         System.out.println("***** INIT *****");
         List<ScheduleGA> listScheduleGAGA = new ArrayList<>();
         for (int i = 0; i < slCaThe; i++) {
-            int chromosome[] = new int[amountMatchInRound * amountRound * 3];
+            int chromosome[] = new int[amountMatchInRound * amountRound * 2];
             for (int r = 0; r < amountRound; r++) {
                 List<Integer> listTimeSlot = initBoxTimeSlot(amountReferee, amountTimeslot);
                 for (int m = 0; m < amountMatchInRound; m++) {
@@ -42,20 +42,7 @@ public class GeneticAlgorithm {
         int i = 0;
         List<Integer> listRefereeInt = new ArrayList<>();
         //SORT
-        for (int p = 1; p <= 2; p++)
-            for (int t = 0; t < amountMatchInRound; t++) {
-                for (int k = 0; k < amountMatchInRound - 1; k++)
-                    if (round[k] > round[k + 1]) {
-
-                        int tmp = round[k];
-                        round[k] = round[k + 1];
-                        round[k + 1] = tmp;
-
-                        int tmp1 = round[k + amountMatchInRound];
-                        round[k + amountMatchInRound] = round[k + amountMatchInRound + 1];
-                        round[k + amountMatchInRound + 1] = tmp1;
-                    }
-            }
+        sortRound(round,amountMatchInRound);
         int count=0;
         while (i < amountMatchInRound-1) {
             if (round[i] == round[i + 1]) {
@@ -96,23 +83,8 @@ public class GeneticAlgorithm {
         int fitness = 0;
         int totalConstraint = 0;
         //SORT
-        for (int p = 1; p <= 2; p++)
-            for (int t = 0; t < amountMatchInRound; t++) {
-                for (int k = 0; k < amountMatchInRound - 1; k++)
-                    if (round[k] > round[k + 1]) {
-
-                        int tmp = round[k];
-                        round[k] = round[k + 1];
-                        round[k + 1] = tmp;
-
-                        int tmp1 = round[k + amountMatchInRound];
-                        round[k + amountMatchInRound] = round[k + amountMatchInRound + 1];
-                        round[k + amountMatchInRound + 1] = tmp1;
-
-                    }
-            }
+        sortRound(round,amountMatchInRound);
         int day = round[i] / amountTimeslotInDay;
-
         int count=1;
         while (i < amountMatchInRound - 1) {
             if (round[i + 1] / amountTimeslotInDay == day) {
@@ -154,20 +126,7 @@ public class GeneticAlgorithm {
         int fitness = 0;
         int totalConstraint = 0;
         //SORT
-        for (int p = 1; p <= 2; p++)
-            for (int t = 0; t < amountMatchInRound; t++) {
-                for (int k = 0; k < amountMatchInRound - 1; k++)
-                    if (round[k] > round[k + 1]) {
-
-                        int tmp = round[k];
-                        round[k] = round[k + 1];
-                        round[k + 1] = tmp;
-
-                        int tmp1 = round[k + amountMatchInRound];
-                        round[k + amountMatchInRound] = round[k + amountMatchInRound + 1];
-                        round[k + amountMatchInRound + 1] = tmp1;
-                    }
-            }
+        sortRound(round,amountMatchInRound);
         // Khoảng thời gian trống trong 1 tuần
         for (int i = 0; i < amountMatchInRound - 1; i++)
             if (round[i + 1] - round[i] >= 2 * amountTimeslotInDay - 2) {
@@ -182,21 +141,7 @@ public class GeneticAlgorithm {
         int fitness = 0;
         int totalConstraint = 0;
         //SORT
-        for (int p = 1; p <= 2; p++)
-            for (int t = 0; t < amountMatchInRound; t++) {
-                for (int k = 0; k < amountMatchInRound - 1; k++)
-                    if (round[k] > round[k + 1]) {
-
-                        int tmp = round[k];
-                        round[k] = round[k + 1];
-                        round[k + 1] = tmp;
-
-                        int tmp1 = round[k + amountMatchInRound];
-                        round[k + amountMatchInRound] = round[k + amountMatchInRound + 1];
-                        round[k + amountMatchInRound + 1] = tmp1;
-
-                    }
-            }
+        sortRound(round,amountMatchInRound);
         int day = round[i] / amountTimeslotInDay;
         int count =1;
         while (i < amountMatchInRound - 1) {
@@ -235,80 +180,6 @@ public class GeneticAlgorithm {
         return new FitnessGA(fitness, totalConstraint);
     }
 
-    //    public Population crossoverPopulation(Population population, int amountRound, int amountMatchInRound,
-//                                          int amountTimeslot, int amountReferee, int amountStadium,
-//                                          int mutationProbability) {
-//        Population newPopulation = new Population();
-//        List<ScheduleGA> scheduleGAS = population.getListScheduleGAGA();
-//        List<ScheduleGA> newScheduleGAS = new ArrayList<>();
-//        for (int i = 0; i < scheduleGAS.size(); i += 2) {
-//            int point1 = random.nextInt(amountMatchInRound * amountRound);
-//            int point2 = random.nextInt(amountMatchInRound * amountRound);
-//            while (point1 == point2)
-//                point2 = random.nextInt(amountMatchInRound * amountRound);
-//            if (point1 > point2) {
-//                int tmp = point1;
-//                point1 = point2;
-//                point2 = tmp;
-//            }
-//            int chromosomeParent1[] = scheduleGAS.get(i).getChromosome();
-//            int chromosomeParent2[] = scheduleGAS.get(i + 1).getChromosome();
-//            int newChromosome1[] = new int[amountMatchInRound * amountRound * 3];
-//            int newChromosome2[] = new int[amountMatchInRound * amountRound * 3];
-//            for (int r = 0; r < amountRound; r++) {
-//                for (int m = 0; m < amountMatchInRound; m++) {
-//                    if ((r * amountMatchInRound + m) < point1 || (r * amountMatchInRound + m) > point2) {
-//                        newChromosome1[r * amountMatchInRound + m] = chromosomeParent1[r * amountMatchInRound + m];
-//                        newChromosome1[amountMatchInRound * amountRound + r * amountMatchInRound + m] =
-//                                chromosomeParent1[amountMatchInRound * amountRound + r * amountMatchInRound + m];
-//                        newChromosome1[amountMatchInRound * amountRound * 2 + r * amountMatchInRound + m] =
-//                                chromosomeParent1[amountMatchInRound * amountRound * 2 + r * amountMatchInRound + m];
-//
-//                        newChromosome2[r * amountMatchInRound + m] = chromosomeParent2[r * amountMatchInRound + m];
-//                        newChromosome2[amountMatchInRound * amountRound + r * amountMatchInRound + m] =
-//                                chromosomeParent2[amountMatchInRound * amountRound + r * amountMatchInRound + m];
-//                        newChromosome2[amountMatchInRound * amountRound * 2 + r * amountMatchInRound + m] =
-//                                chromosomeParent2[amountMatchInRound * amountRound * 2 + r * amountMatchInRound + m];
-//                    }
-//                    if (r * amountMatchInRound + m >= point1 && r * amountMatchInRound + m <= point2) {
-//                        newChromosome1[r * amountMatchInRound + m] = chromosomeParent2[r * amountMatchInRound + m];
-//                        newChromosome1[amountMatchInRound * amountRound + r * amountMatchInRound + m] =
-//                                chromosomeParent2[amountMatchInRound * amountRound + r * amountMatchInRound + m];
-//                        newChromosome1[amountMatchInRound * amountRound * 2 + r * amountMatchInRound + m] =
-//                                chromosomeParent2[amountMatchInRound * amountRound * 2 + r * amountMatchInRound + m];
-//
-//                        newChromosome2[r * amountMatchInRound + m] = chromosomeParent1[r * amountMatchInRound + m];
-//                        newChromosome2[amountMatchInRound * amountRound + r * amountMatchInRound + m] =
-//                                chromosomeParent1[amountMatchInRound * amountRound + r * amountMatchInRound + m];
-//                        newChromosome2[amountMatchInRound * amountRound * 2 + r * amountMatchInRound + m] =
-//                                chromosomeParent1[amountMatchInRound * amountRound * 2 + r * amountMatchInRound + m];
-//                    }
-//                }
-//            }
-//            int mutationProbabilityIndividual1 = random.nextInt(100);
-//            if (mutationProbabilityIndividual1 < mutationProbability) {
-////                System.out.println("***MUTATION***");
-//                int indexMutation = random.nextInt(amountMatchInRound * amountRound - 1) + 1;
-//                newChromosome1[indexMutation - 1] = random.nextInt(amountTimeslot);
-//                newChromosome1[amountMatchInRound * amountRound + indexMutation - 1] = random.nextInt(amountReferee);
-//                newChromosome1[amountMatchInRound * amountRound * 2 + indexMutation - 1] = random.nextInt(amountStadium);
-//            }
-//            int mutationProbabilityIndividual2 = random.nextInt(100);
-//            if (mutationProbabilityIndividual2 < mutationProbability) {
-////                System.out.println("***MUTATION***");
-//                int indexMutation = random.nextInt(amountMatchInRound * amountRound - 1) + 1;
-//                newChromosome2[indexMutation - 1] = random.nextInt(amountTimeslot);
-//                newChromosome2[amountMatchInRound * amountRound + indexMutation - 1] = random.nextInt(amountReferee);
-//                newChromosome2[amountMatchInRound * amountRound * 2 + indexMutation - 1] = random.nextInt(amountStadium);
-//            }
-//            ScheduleGA scheduleGANew1 = new ScheduleGA(newChromosome1, 0, 0, 0);
-//            ScheduleGA scheduleGANew2 = new ScheduleGA(newChromosome2, 0, 0, 0);
-//            newScheduleGAS.add(scheduleGANew1);
-//            newScheduleGAS.add(scheduleGANew2);
-//        }
-//        newPopulation.setListScheduleGAGA(newScheduleGAS);
-//        return newPopulation;
-//    }
     public Population crossoverPopulation(Population population, int amountRound, int amountMatchInRound,
                                           int amountTimeslot, int amountReferee, int mutationProbability, int crossoverProbability) {
 
@@ -474,7 +345,23 @@ public class GeneticAlgorithm {
         }
         return map;
     }
+    public void sortRound(int[] round , int amountMatchInRound){
+        for (int p = 1; p <= 2; p++)
+            for (int t = 0; t < amountMatchInRound; t++) {
+                for (int k = 0; k < amountMatchInRound - 1; k++)
+                    if (round[k] > round[k + 1]) {
 
+                        int tmp = round[k];
+                        round[k] = round[k + 1];
+                        round[k + 1] = tmp;
+
+                        int tmp1 = round[k + amountMatchInRound];
+                        round[k + amountMatchInRound] = round[k + amountMatchInRound + 1];
+                        round[k + amountMatchInRound + 1] = tmp1;
+
+                    }
+            }
+    }
     public static void main(String[] args) {
         GeneticAlgorithm geneticAlgorithm = new GeneticAlgorithm();
         int slCaThe = 50;
